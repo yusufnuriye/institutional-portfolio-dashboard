@@ -1,0 +1,148 @@
+project:
+  base_currency: GBP
+  data_source: Yahoo Finance via yfinance
+  expected_earliest_common_start: "2017-11-21"
+  proxy_selection_status: user_verified_pending_role_currency_and_data_validation
+  proxy_selection_approved_by: Yusuf
+  proxy_selection_approved_on: "2026-08-11"
+  investment_roles_status: user_verified_pending_currency_and_data_validation
+  investment_roles_approved_by: Yusuf
+  investment_roles_approved_on: "2026-08-11"
+  currency_exposure_status: user_verified_pending_historical_data_validation
+  currency_exposure_approved_by: Yusuf
+  currency_exposure_approved_on: "2026-08-11"
+  universe_status: user_verified_pending_historical_data_validation
+  universe_approved_by: Yusuf
+  universe_approved_on: "2026-08-11"
+  data_modelling_rules_status: user_verified_pending_implementation_and_data_validation
+  data_modelling_rules_approved_by: Yusuf
+  data_modelling_rules_approved_on: "2026-08-11"
+  repository_technical_setup_status: user_verified_pending_final_day_1_inspection
+  repository_technical_setup_approved_by: Yusuf
+  repository_technical_setup_approved_on: "2026-08-11"
+  day_1_status: pending_final_inspection_and_sign_off
+
+methodology:
+  price_treatment: adjusted_prices
+  comparison_window: common_history_only
+  large_gap_policy: do_not_fill_automatically
+  daily_return_type: simple
+  strategic_return_frequency: monthly
+  cagr_method: geometric_from_cumulative_wealth
+  rebalancing_frequency: monthly
+  historical_results_are_forecasts: false
+
+constraints:
+  long_only: true
+  leverage_allowed: false
+  short_selling_allowed: false
+  fully_invested: true
+  maximum_asset_weight: 0.40
+  minimum_fixed_income_weight: 0.30
+  fixed_income_tickers:
+    - IGLT.L
+    - AGBP.L
+    - SLXX.L
+
+assets:
+  - ticker: VWRL.L
+    name: Vanguard FTSE All-World UCITS ETF
+    asset_class: Global equities
+    role: Core growth engine
+    listing_currency: GBP
+    hedging_policy: unhedged
+    economic_currency_exposure: Global currencies; GBP return includes FX effects
+    inception_date: "2012-05-22"
+    income_treatment: Distributing; adjusted prices required
+    is_fixed_income: false
+    known_overlap: Includes UK equities, so CUKX is a deliberate home-market tilt
+    source_url: https://www.vanguard.co.uk/professional/product/etf/equity/9505/ftse-all-world-ucits-etf-usd-distributing
+
+  - ticker: CUKX.L
+    name: iShares Core FTSE 100 UCITS ETF GBP (Acc)
+    asset_class: UK equities
+    role: Home-market growth tilt
+    listing_currency: GBP
+    hedging_policy: not_applicable
+    economic_currency_exposure: UK-listed companies; underlying revenues may still be global
+    inception_date: "2010-01-26"
+    income_treatment: Accumulating
+    is_fixed_income: false
+    known_overlap: Constituents are partly included in VWRL
+    source_url: https://www.ishares.com/uk/individual/en/products/253716
+
+  - ticker: IGLT.L
+    name: iShares Core UK Gilts UCITS ETF
+    asset_class: UK government bonds
+    role: Sovereign defence and duration exposure
+    listing_currency: GBP
+    hedging_policy: not_applicable
+    economic_currency_exposure: GBP
+    inception_date: "2006-12-01"
+    income_treatment: Distributing; adjusted prices required
+    is_fixed_income: true
+    known_overlap: AGBP also contains government bonds, but with global GBP-hedged exposure
+    source_url: https://www.ishares.com/uk/individual/en/products/251806
+
+  - ticker: AGBP.L
+    name: iShares Core Global Aggregate Bond UCITS ETF GBP Hedged (Dist)
+    asset_class: Global investment-grade bonds
+    role: Diversified defensive fixed income
+    listing_currency: GBP
+    hedging_policy: gbp_hedged
+    economic_currency_exposure: Global bonds with share-class currency hedging to GBP
+    inception_date: "2017-11-21"
+    income_treatment: Distributing; adjusted prices required
+    is_fixed_income: true
+    known_overlap: Contains sovereign and corporate bonds also represented by IGLT and SLXX
+    source_url: https://www.ishares.com/uk/individual/en/products/291771/ishares-core-global-aggregate-bond-ucits-etf
+
+  - ticker: SLXX.L
+    name: iShares Core GBP Corporate Bond UCITS ETF
+    asset_class: Sterling investment-grade corporate bonds
+    role: Credit income and defensive diversification
+    listing_currency: GBP
+    hedging_policy: not_applicable
+    economic_currency_exposure: GBP-denominated corporate debt
+    inception_date: "2004-03-29"
+    income_treatment: Distributing; adjusted prices required
+    is_fixed_income: true
+    known_overlap: AGBP includes a global corporate-bond sleeve
+    source_url: https://www.ishares.com/uk/individual/en/products/251839
+
+  - ticker: SGLN.L
+    name: iShares Physical Gold ETC
+    asset_class: Gold
+    role: Crisis and inflation-sensitive diversifier
+    listing_currency: GBP
+    hedging_policy: unhedged
+    economic_currency_exposure: USD-linked gold exposure translated into GBP
+    inception_date: "2011-04-08"
+    income_treatment: No income
+    is_fixed_income: false
+    known_overlap: AGCP's broad commodity index also contains a gold allocation
+    source_url: https://www.ishares.com/uk/individual/en/products/258441
+
+  - ticker: AGCP.L
+    name: WisdomTree Broad Commodities
+    asset_class: Broad commodity futures
+    role: Inflation-sensitive real-asset diversifier
+    listing_currency: GBP
+    hedging_policy: unhedged
+    economic_currency_exposure: USD commodity index translated into GBP
+    inception_date: "2006-09-22"
+    gbp_listing_date: "2007-10-29"
+    income_treatment: Total-return index exposure
+    is_fixed_income: false
+    known_overlap: The index includes precious metals, including gold
+    source_url: https://www.wisdomtree.com/ie/products/commodities/wisdomtree-broad-commodities
+
+reference_portfolios:
+  sixty_forty:
+    VWRL.L: 0.45
+    CUKX.L: 0.15
+    IGLT.L: 0.15
+    AGBP.L: 0.15
+    SLXX.L: 0.10
+    SGLN.L: 0.00
+    AGCP.L: 0.00

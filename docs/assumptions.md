@@ -1,0 +1,53 @@
+# Assumption Register
+
+This register separates locked design decisions from items that must be validated with data. Any change should record a reason rather than silently rewriting history.
+
+| ID | Assumption or decision | Status | Reason / validation required |
+| --- | --- | --- | --- |
+| A01 | The client is the fictional Harbourstone Foundation with £100m in assets. | Locked | Creates a concrete institutional decision context without claiming real-money management. |
+| A02 | GBP is the reporting and base currency. | Locked | The client is UK based. |
+| A03 | The objective is UK CPI +3% annualised over rolling five-year periods, before transaction costs and tax. | Locked and user-verified | Matches a balanced-growth real-return mandate; it is aspirational, not guaranteed. Approved by Yusuf on 10 Aug 2026 after an understanding check. |
+| A04 | The core model does not ingest or forecast CPI. | Locked for core | The inflation objective will be contextual; adding a robust inflation pipeline is lower priority than the required portfolio and risk engine. |
+| A05 | The drawdown reference is approximately 15–20%, not a hard guaranteed limit. | Locked and user-verified | Historical drawdown cannot cap future loss. Approved by Yusuf on 10 Aug 2026 after correctly explaining drawdown, recovery asymmetry and moderate risk. |
+| A06 | Portfolios are long only, unlevered, fully invested and capped at 40% per asset. | Locked and user-verified | Core client and optimisation constraints. Approved by Yusuf on 10 Aug 2026 after explaining concentration, long-only investing and leverage. |
+| A07 | Mandate-constrained portfolios hold at least 30% across IGLT, AGBP and SLXX. | Locked and user-verified | Provides a minimum liquid fixed-income allocation for a moderate-risk client. Approved by Yusuf on 10 Aug 2026 after identifying all three bond sleeves and verifying the 30% calculation. |
+| A08 | The initial universe contains seven liquid LSE-listed proxies. | Provisionally approved and user-verified; data validation pending | Yusuf approved the seven-product universe on 11 Aug 2026 after verifying its asset-class and regional diversification, deliberate overlap and the need for reliable common history. Historical-data checks must pass before unconditional final approval. |
+| A09 | The earliest common sample is expected to begin no earlier than 21 Nov 2017. | Provisional | AGBP is the youngest selected share class; the actual Yahoo history may start later. |
+| A10 | Adjusted market prices will be requested from Yahoo Finance through `yfinance`. | User-verified; provider validation pending | Yusuf approved the adjusted-price rule on 11 Aug 2026. Day 2 must still inspect the returned schema and confirm how distributions and corporate actions are represented. |
+| A11 | Downloaded raw data will be cached locally and refreshed only on explicit request or when the requested end date changes. | Locked design | Supports reproducibility and avoids needless repeated downloads. |
+| A12 | Large data gaps will not be forward-filled automatically. | Locked and user-verified | Filling long gaps could invent return histories and distort volatility or correlation. Yusuf explained this risk on 11 Aug 2026. |
+| A13 | Daily simple returns are used for daily risk statistics; monthly simple returns are used for optimisation inputs. | Locked and user-verified | Keeps additive portfolio calculations intuitive while aligning optimisation with the strategic horizon. Approved by Yusuf on 11 Aug 2026. |
+| A14 | CAGR is calculated geometrically from cumulative wealth and elapsed time, not confused with arithmetic mean return. | Locked and user-verified | Yusuf distinguished compounded growth from an arithmetic average and correctly calculated a simple return on 11 Aug 2026. |
+| A15 | Annualisation uses 252 trading days for daily statistics and 12 periods for monthly statistics. | Locked | Conventional approximation, to be labelled. |
+| A16 | Historical portfolio paths assume monthly rebalancing to target weights. | Locked and user-verified | More defensible for a strategic institutional portfolio than implicit daily rebalancing. Approved by Yusuf on 11 Aug 2026. |
+| A17 | The default annual risk-free rate is 0%, clearly labelled and user-adjustable later if time allows. | Locked for core | Avoids mixing a current cash rate with a long historical sample. |
+| A18 | Historical VaR and Expected Shortfall use a 95% confidence level by default. | Locked for core | Transparent core tail-risk setting. |
+| A19 | VWRL is the equity-market benchmark for beta. | Provisional | It represents the core global growth exposure; confirm data quality on Day 2. |
+| A20 | A GBP exchange listing is not treated as proof of currency hedging. | Locked | VWRL, SGLN and AGCP retain underlying foreign-currency or USD-linked economic exposure. |
+| A21 | The model will not decompose returns into local-asset and FX components. | Locked for core | Currency effects remain embedded in GBP-listed prices and will be disclosed as a limitation. |
+| A22 | Fees embedded in product prices remain in observed returns; external fees, tax, spreads, trading costs and market impact are excluded. | Locked for core | Keeps the core model feasible while preventing a false claim of net client performance. |
+| A23 | Optimisation and headline historical comparisons are in-sample unless explicitly labelled otherwise. | Locked and user-verified | No out-of-sample design has yet been implemented. Yusuf stated that historical results are evidence rather than guarantees on 11 Aug 2026. |
+| A24 | Historical stress windows will be defined independently of portfolio results. | Locked design | Reduces cherry-picking risk. |
+| A25 | Hypothetical scenario loss is initially the weighted sum of visible asset shocks. | Locked for core | Transparent and testable, but ignores nonlinear effects, changing correlations and liquidity stress. |
+| A26 | Harbourstone plans to distribute approximately 3% annually, initially about £3m. | Locked and user-verified | Broadly aligns spending with the real-growth component of the CPI +3% objective, before fees and costs; achievement is not guaranteed. Approved by Yusuf on 10 Aug 2026 after an understanding check. |
+| A27 | The next 12 months of planned grants should remain in cash or readily saleable investments. | Locked and user-verified | Supports timely grant payments without forcing sales of illiquid or depressed assets. Approved by Yusuf on 10 Aug 2026 after an understanding check. |
+| A28 | Historical portfolio performance will not deduct actual charitable withdrawals. | Locked for core | Keeps the investment engine focused, but means the dashboard does not model Harbourstone's complete post-spending asset path. |
+| A29 | The proposed universe spans global equities, UK equities, UK gilts, GBP-hedged global bonds, sterling corporate bonds, gold and broad commodities. | Provisionally approved and user-verified; data validation pending | Yusuf approved the roles, risks, currency treatment, diversification and deliberate overlaps of the seven products on 11 Aug 2026. Reliable data and sufficient common history remain outstanding before unconditional final approval. |
+| A30 | All seven products will be compared only over their validated common historical period. | Locked and user-verified; dates pending validation | A common window prevents an unfair comparison in which some assets receive longer or different market histories. Yusuf explained this on 11 Aug 2026. |
+| A31 | Financial calculations remain in `src/`, separate from `app.py`; project dependencies are declared in `requirements.txt`; virtual environments, credentials, cached data and generated outputs remain outside Git. | Locked and user-verified | Separation supports testing and debugging, isolated dependencies support reproducibility, secrets must not be exposed, and reproducible local artefacts should not enlarge the repository. Yusuf explained and approved this structure on 11 Aug 2026. |
+
+## Change log
+
+| Date | IDs changed | Change | Reason |
+| --- | --- | --- | --- |
+| 10 Aug 2026 | A01–A25 | Initial Day 1 register created. | Establish the mandate before financial analysis begins. |
+| 10 Aug 2026 | A03 | Investment objective user-verified and approved. | Yusuf demonstrated the CPI +3% calculation and explained why the target is not guaranteed. |
+| 10 Aug 2026 | A05 | Risk tolerance user-verified and approved. | Yusuf calculated drawdown and explained recovery asymmetry, uncertainty and the meaning of moderate risk. |
+| 10 Aug 2026 | A26–A28 | Spending and liquidity policy user-verified and approved. | Yusuf linked the 3% spending policy to the CPI +3% objective and explained the need for 12 months of liquid grant funding. |
+| 10 Aug 2026 | A06–A07 | Strategic investment constraints user-verified and approved. | Yusuf explained the concentration and fixed-income rules, distinguished the three bond sleeves and stated why historical optimisation is not a forecast. |
+| 11 Aug 2026 | A29 | Asset-class understanding user-verified and approved. | Yusuf distinguished equities from bonds, explained the UK tilt, identified the fixed-income sleeves, described gold and commodity roles, and recognised that defensive assets can still fall. |
+| 11 Aug 2026 | A08, A29 | Proposed investment selection user-verified and approved. | Yusuf explained the proxy approach, mapped the seven products to their asset classes and identified the three fixed-income tickers. Final-universe approval remains conditional on the remaining checks. |
+| 11 Aug 2026 | A08, A20, A29 | Investment roles and currency exposure user-verified and approved. | Yusuf distinguished the products' intended roles, deliberate overlaps, listing currencies, economic currency exposures and GBP hedging. |
+| 11 Aug 2026 | A08, A29 | Provisional investment universe user-verified and approved. | Yusuf explained its cross-asset and regional diversification and accepted that reliable data with sufficient common history must still be validated. |
+| 11 Aug 2026 | A10, A12–A14, A16, A23, A30 | Data and modelling rules user-verified and approved. | Yusuf explained the common-history and missing-data rules, calculated a simple return, distinguished CAGR from an arithmetic average and treated history as evidence rather than a forecast. Implementation and data validation remain pending. |
+| 11 Aug 2026 | A31 | Repository and technical setup user-verified and approved. | Yusuf explained the separation of calculations and presentation, the configuration file's role, Git exclusions and reproducible dependency isolation. Final Day 1 inspection remains pending. |
