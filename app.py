@@ -26,10 +26,11 @@ st.set_page_config(
 config = load_asset_config()
 
 st.title("Institutional Multi-Asset Portfolio Strategy and Risk Dashboard")
-st.caption("Day 1 foundation — mandate and provisional asset universe")
+st.caption("Day 2 implementation complete — live data validation pending")
 st.warning(
-    "No portfolio results or recommendations exist yet. The universe remains "
-    "provisional until Day 2 data-quality validation is complete."
+    "The ingestion, validation and return engine is complete, but no live "
+    "data-quality report is bundled. The universe remains provisional and no "
+    "portfolio recommendation exists yet."
 )
 
 st.subheader("Fictional mandate")
@@ -46,11 +47,12 @@ st.markdown(
 st.subheader("Provisional asset universe")
 display_columns = (
     "ticker",
+    "instrument_type",
     "asset_class",
     "role",
     "listing_currency",
     "hedging_policy",
-    "inception_date",
+    "lse_listing_date",
 )
 st.dataframe(
     [
@@ -60,6 +62,18 @@ st.dataframe(
     width="stretch",
     hide_index=True,
 )
+
+st.subheader("Day 2 data engine")
+st.markdown(
+    """
+    - Adjusted daily-close ingestion with request-aware local caching
+    - Complete-date alignment across all seven assets without forward-filling
+    - Data-quality checks for missing series, non-positive prices, insufficient
+      common history and suspicious one-day moves
+    - Daily and month-end simple returns plus a cumulative-growth reconstruction check
+    """
+)
+st.code("python -m src.returns --refresh", language="bash")
 
 st.info(
     "This project is an educational simulation, not investment advice or a "

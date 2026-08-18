@@ -6,7 +6,7 @@ The final output will compare simple, user-defined and constrained-optimisation 
 
 ## Project status
 
-**Day 1 of 10 — mandate and repository foundation.** The full investment mandate—including the client profile, objective, risk tolerance, spending and liquidity policy, and strategic constraints—has been taught, tested and approved. The seven proposed asset classes, their specific exchange-traded proxies, each proxy's intended role and principal risk, their currency exposures and the provisional universe have also been taught, tested and approved. The core data and modelling rules and the repository and technical setup have now been understood and approved. Final Day 1 inspection and sign-off remain pending. Python implementation and historical-data validation remain for Day 2, and the universe remains conditional on those data checks before unconditional final approval. No portfolio results or recommendations have been produced yet.
+**Day 2 of 10 — 100% of the planned implementation complete.** Official-source verification, adjusted-price ingestion, matching-cache behaviour, common-history validation and daily/monthly return calculations are implemented, tested and user-approved. The first live Yahoo Finance download could not be executed in the build workspace, so the universe remains provisional until a live run creates a passing data-quality report. No portfolio recommendation has been produced.
 
 ## Client mandate
 
@@ -40,21 +40,19 @@ How should a fictional UK institutional investor allocate a £100 million portfo
 
 ## Initial asset universe
 
-The provisionally approved universe intentionally combines growth, defensive and inflation-sensitive exposures. It remains conditional until the data checks confirm quality and a sufficiently long common history.
+The shortlist intentionally combines growth, defensive and inflation-sensitive exposures. It remains provisional until Day 2 confirms data quality and a sufficiently long common history.
 
-**Learning checkpoint:** On 11 August 2026, Yusuf demonstrated the difference between equities and bonds, explained the deliberate UK equity tilt, identified the three fixed-income sleeves, described the diversification roles of gold and commodities, and recognised that defensive assets can still fall. He then correctly mapped all seven asset classes to their proposed products and tickers, explained why an ETF can serve as a practical asset-class proxy, distinguished each proxy's intended role and principal risk, and explained the difference between listing currency, economic currency exposure and GBP hedging. He provisionally approved the seven-product universe after explaining its cross-asset and regional diversification, deliberate UK-equity overlap and the need for reliable data with sufficient common history. Unconditional final approval still depends on those data checks.
+| Ticker | Vehicle | Exposure | Portfolio role | GBP treatment | LSE listing start |
+| --- | --- | --- | --- | --- | --- |
+| `VWRL.L` | ETF | Global equities | Core growth | GBP listing; underlying exposure unhedged | 23 May 2012 |
+| `CUKX.L` | ETF | UK large-cap equities | Home-market growth tilt | GBP assets and GBP listing | 15 Sep 2010 |
+| `IGLT.L` | ETF | UK government bonds | Sovereign defence and duration | GBP assets and GBP listing | 1 Dec 2006 |
+| `AGBP.L` | ETF | Global investment-grade bonds | Diversified defensive fixed income | GBP-hedged share class | 23 Nov 2017 |
+| `SLXX.L` | ETF | Sterling investment-grade corporate bonds | Credit income and diversification | GBP assets and GBP listing | 29 Mar 2004 |
+| `SGLN.L` | Physical-metal ETC | Physical gold | Crisis and inflation-sensitive diversifier | GBP listing; gold exposure unhedged | 11 Apr 2011 |
+| `AGCP.L` | Collateralised-swap ETC | Broad commodity futures | Inflation-sensitive diversifier | GBP listing; underlying USD index unhedged | 29 Oct 2007 |
 
-| Ticker | Exposure | Portfolio role | GBP treatment | Fund/listing start |
-| --- | --- | --- | --- | --- |
-| `VWRL.L` | Global equities | Core growth | GBP listing; underlying exposure unhedged | 22 May 2012 |
-| `CUKX.L` | UK large-cap equities | Home-market growth tilt | GBP assets and GBP listing | 26 Jan 2010 |
-| `IGLT.L` | UK government bonds | Sovereign defence and duration | GBP assets and GBP listing | 1 Dec 2006 |
-| `AGBP.L` | Global investment-grade bonds | Diversified defensive fixed income | GBP-hedged share class | 21 Nov 2017 |
-| `SLXX.L` | Sterling investment-grade corporate bonds | Credit income and diversification | GBP assets and GBP listing | 29 Mar 2004 |
-| `SGLN.L` | Physical gold | Crisis and inflation-sensitive diversifier | GBP listing; gold exposure unhedged | 8 Apr 2011 |
-| `AGCP.L` | Broad commodity futures | Inflation-sensitive diversifier | GBP listing; underlying USD index unhedged | 22 Sep 2006; GBP listing 29 Oct 2007 |
-
-The earliest possible common start is expected to be late November 2017 because `AGBP.L` is the youngest proxy. Day 2 will verify the actual Yahoo Finance histories, missing observations, adjusted-price behaviour and overlapping date range before the universe is finalised.
+The earliest possible common start is expected to be 23 November 2017 because `AGBP.L` is the youngest LSE listing. Day 2 will verify the actual Yahoo Finance histories, missing observations, adjusted-price behaviour and overlapping date range before the universe is finalised.
 
 ## Currency policy
 
@@ -88,8 +86,6 @@ Planned modules include:
 - Historical stress windows and transparent hypothetical asset shocks
 - Client-suitability assessment and an investment recommendation with conditions and caveats
 
-**Learning checkpoint:** On 11 August 2026, Yusuf explained why every proxy must use the same common historical period, why large missing-data gaps must not be filled automatically, correctly calculated a 5% simple return from £100 to £105, distinguished CAGR from an arithmetic average return and stated that historical performance is evidence rather than a guarantee. He then approved the adjusted-price, return-frequency, compounding and monthly-rebalancing rules. Implementation and data validation remain pending.
-
 ## Project structure
 
 ```text
@@ -107,13 +103,18 @@ institutional-portfolio-dashboard/
 ├── outputs/
 │   └── charts/
 ├── src/
-│   └── __init__.py
+│   ├── __init__.py
+│   ├── data_pipeline.py
+│   ├── data_quality.py
+│   └── returns.py
 └── tests/
+    ├── test_config.py
+    ├── test_data_pipeline.py
+    ├── test_data_quality.py
+    └── test_returns.py
 ```
 
-Calculation modules and tests will be added one component at a time on Days 2–6. Financial calculations will remain separate from the Streamlit presentation layer.
-
-**Learning checkpoint:** On 11 August 2026, Yusuf explained why financial calculations belong in `src/` rather than the Streamlit presentation layer, identified `config/assets.yml` as the store for tickers, constraints and modelling rules, and explained why virtual environments, credentials and reproducible cached data stay out of Git. He also explained how `requirements.txt` and an isolated virtual environment support reproducible dependency setup. The repository and technical setup are approved; final Day 1 inspection and sign-off remain pending.
+Day 2 added separate ingestion, data-quality and return modules under `src/`, with calculation tests under `tests/`. Financial calculations remain separate from the Streamlit presentation layer.
 
 ## Installation
 
@@ -143,9 +144,21 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
+## Build the Day 2 data and return outputs
+
+From the project root, run:
+
+```bash
+python -m src.returns --refresh
+```
+
+This requests adjusted daily closes, writes a matching local cache, aligns all seven assets to complete shared dates, creates a data-quality report and saves daily, month-end and cumulative return files. The command stops rather than publishing outputs if a ticker is missing, the common sample is too short, a price is non-positive, a daily move exceeds the review threshold or compounded returns fail to reconstruct price growth.
+
+The generated files remain under `data/cache/` and are deliberately excluded from Git because they can be downloaded again. A successful live run is required before changing the universe from provisional to final.
+
 ## Data sources
 
-- Historical market prices: Yahoo Finance via `yfinance` (to be validated on Day 2)
+- Historical market prices: Yahoo Finance via `yfinance` (pipeline implemented; first live download still required)
 - Product exposure, inception and currency facts: official Vanguard, iShares and WisdomTree product pages
 
 `yfinance` is an unofficial research interface and is not affiliated with or endorsed by Yahoo. Downloaded data may contain errors, revisions, missing observations or inconsistent adjusted-price behaviour. Raw downloads will be cached and validated before calculations are performed.

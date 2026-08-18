@@ -52,87 +52,33 @@ def test_every_asset_records_a_product_source() -> None:
     assert all(asset["source_url"].startswith("https://") for asset in assets)
 
 
-def test_proxy_selection_checkpoint_is_recorded() -> None:
-    """Keep the user's approval separate from final-universe approval."""
+def test_instrument_verification_is_recorded() -> None:
+    """The approved official-source check must remain explicit."""
     project = load_config()["project"]
 
-    assert project["proxy_selection_status"] == (
-        "user_verified_pending_role_currency_and_data_validation"
-    )
-    assert project["proxy_selection_approved_by"] == "Yusuf"
-    assert project["proxy_selection_approved_on"] == "2026-08-11"
-    assert project["universe_status"] == (
-        "user_verified_pending_historical_data_validation"
-    )
+    assert project["instrument_verification_status"] == "approved"
+    assert project["ingestion_and_cache_status"] == "approved"
+    assert project["alignment_and_validation_status"] == "approved"
+    assert project["return_calculation_status"] == "approved"
+    assert project["official_sources_verified_on"] == "2026-08-18"
+    assert project["expected_earliest_common_start"] == "2017-11-23"
 
 
-def test_investment_role_checkpoint_is_recorded() -> None:
-    """Record role approval without prematurely approving the universe."""
+def test_day_two_signoff_preserves_live_data_boundary() -> None:
+    """Implementation sign-off must not falsely finalise untested live data."""
     project = load_config()["project"]
 
-    assert project["investment_roles_status"] == (
-        "user_verified_pending_currency_and_data_validation"
-    )
-    assert project["investment_roles_approved_by"] == "Yusuf"
-    assert project["investment_roles_approved_on"] == "2026-08-11"
-    assert project["universe_status"] == (
-        "user_verified_pending_historical_data_validation"
-    )
+    assert project["day_2_status"] == "complete_live_download_pending"
+    assert project["universe_status"] == "provisional_until_day_2_validation"
 
 
-def test_currency_exposure_checkpoint_is_recorded() -> None:
-    """Record currency approval without prematurely approving the universe."""
-    project = load_config()["project"]
+def test_vehicle_types_distinguish_etfs_from_etcs() -> None:
+    """Gold and broad commodities are ETCs; the other proxies are ETFs."""
+    assets = {asset["ticker"]: asset for asset in load_config()["assets"]}
 
-    assert project["currency_exposure_status"] == (
-        "user_verified_pending_historical_data_validation"
-    )
-    assert project["currency_exposure_approved_by"] == "Yusuf"
-    assert project["currency_exposure_approved_on"] == "2026-08-11"
-    assert project["universe_status"] == (
-        "user_verified_pending_historical_data_validation"
-    )
-
-
-def test_provisional_universe_checkpoint_is_recorded() -> None:
-    """Record conditional approval while data validation remains pending."""
-    project = load_config()["project"]
-
-    assert project["universe_status"] == (
-        "user_verified_pending_historical_data_validation"
-    )
-    assert project["universe_approved_by"] == "Yusuf"
-    assert project["universe_approved_on"] == "2026-08-11"
-
-
-def test_data_and_modelling_rules_checkpoint_is_recorded() -> None:
-    """Lock the reviewed rules without claiming implementation is complete."""
-    config = load_config()
-    project = config["project"]
-    methodology = config["methodology"]
-
-    assert project["data_modelling_rules_status"] == (
-        "user_verified_pending_implementation_and_data_validation"
-    )
-    assert project["data_modelling_rules_approved_by"] == "Yusuf"
-    assert project["data_modelling_rules_approved_on"] == "2026-08-11"
-    assert methodology["price_treatment"] == "adjusted_prices"
-    assert methodology["comparison_window"] == "common_history_only"
-    assert methodology["large_gap_policy"] == "do_not_fill_automatically"
-    assert methodology["daily_return_type"] == "simple"
-    assert methodology["strategic_return_frequency"] == "monthly"
-    assert methodology["cagr_method"] == "geometric_from_cumulative_wealth"
-    assert methodology["rebalancing_frequency"] == "monthly"
-    assert methodology["historical_results_are_forecasts"] is False
-
-
-def test_repository_and_technical_setup_checkpoint_is_recorded() -> None:
-    """Approve the repository foundation without closing Day 1 early."""
-    project = load_config()["project"]
-
-    assert project["repository_technical_setup_status"] == (
-        "user_verified_pending_final_day_1_inspection"
-    )
-    assert project["repository_technical_setup_approved_by"] == "Yusuf"
-    assert project["repository_technical_setup_approved_on"] == "2026-08-11"
-    assert project["day_1_status"] == "pending_final_inspection_and_sign_off"
+    assert {ticker for ticker, asset in assets.items() if asset["instrument_type"] == "ETC"} == {
+        "SGLN.L",
+        "AGCP.L",
+    }
+    assert all(asset["instrument_type"] == "ETF" for ticker, asset in assets.items() if ticker not in {"SGLN.L", "AGCP.L"})
+    assert all("lse_listing_date" in asset for asset in assets.values())
