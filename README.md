@@ -6,7 +6,7 @@ The final output will compare simple, user-defined and constrained-optimisation 
 
 ## Project status
 
-**Day 2 of 10 — 100% of the planned implementation complete.** Official-source verification, adjusted-price ingestion, matching-cache behaviour, common-history validation and daily/monthly return calculations are implemented, tested and user-approved. The first live Yahoo Finance download could not be executed in the build workspace, so the universe remains provisional until a live run creates a passing data-quality report. No portfolio recommendation has been produced.
+**Completion Sprint 1 is implemented, tested and user-defended.** The adjusted-price pipeline, return engine, eight performance and risk metrics, and three baseline portfolios are implemented. The automated suite passes 48 tests and the deterministic formula checks are recorded in `docs/sprint1_validation.md`. Yahoo rate limited the latest live-data attempt, so the universe and all historical findings remain provisional. No final portfolio recommendation has been produced.
 
 ## Client mandate
 
@@ -72,7 +72,7 @@ GBP is the reporting currency. London-listed GBP price series will be used where
 5. Maximum historical Sharpe ratio
 6. Final recommended institutional allocation
 
-The 60/40 reference will initially allocate 45% to global equities, 15% to UK equities, 15% to UK gilts, 15% to GBP-hedged global aggregate bonds and 10% to sterling investment-grade credit.
+The mandate-compliant 60/40 reference allocates 40% to global equities, 20% to UK equities, 15% to UK gilts, 15% to GBP-hedged global aggregate bonds and 10% to sterling investment-grade credit.
 
 ## Methodology
 
@@ -106,15 +106,19 @@ institutional-portfolio-dashboard/
 │   ├── __init__.py
 │   ├── data_pipeline.py
 │   ├── data_quality.py
+│   ├── metrics.py
+│   ├── portfolios.py
 │   └── returns.py
 └── tests/
     ├── test_config.py
     ├── test_data_pipeline.py
     ├── test_data_quality.py
+    ├── test_metrics.py
+    ├── test_portfolios.py
     └── test_returns.py
 ```
 
-Day 2 added separate ingestion, data-quality and return modules under `src/`, with calculation tests under `tests/`. Financial calculations remain separate from the Streamlit presentation layer.
+Financial calculations remain separate from the Streamlit presentation layer. Sprint 1 adds the eight-metric engine, three baseline portfolios, monthly rebalancing and auditable contribution checks under `src/`, with formula and constraint tests under `tests/`.
 
 ## Installation
 
@@ -155,6 +159,17 @@ python -m src.returns --refresh
 This requests adjusted daily closes, writes a matching local cache, aligns all seven assets to complete shared dates, creates a data-quality report and saves daily, month-end and cumulative return files. The command stops rather than publishing outputs if a ticker is missing, the common sample is too short, a price is non-positive, a daily move exceeds the review threshold or compounded returns fail to reconstruct price growth.
 
 The generated files remain under `data/cache/` and are deliberately excluded from Git because they can be downloaded again. A successful live run is required before changing the universe from provisional to final.
+
+## Build Sprint 1 metrics and portfolios
+
+After a successful live-data run, execute:
+
+```bash
+python -m src.metrics
+python -m src.portfolios
+```
+
+The calculation assumptions, sign conventions, manual formula checks and portfolio reconciliations are documented in [`docs/sprint1_validation.md`](docs/sprint1_validation.md).
 
 ## Data sources
 

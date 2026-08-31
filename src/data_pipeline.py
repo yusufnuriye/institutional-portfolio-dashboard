@@ -112,7 +112,7 @@ def download_adjusted_closes(
         repair=False,
         progress=False,
         group_by="column",
-        threads=True,
+        threads=False,
         multi_level_index=True,
     )
     return extract_adjusted_closes(downloaded, tickers)

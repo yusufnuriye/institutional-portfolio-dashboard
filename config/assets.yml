@@ -8,6 +8,10 @@ project:
   alignment_and_validation_status: approved
   return_calculation_status: approved
   day_2_status: complete_live_download_pending
+  sprint_1_metrics_status: approved_live_results_pending
+  sprint_1_portfolios_status: approved
+  sprint_1_defence_status: approved
+  sprint_1_status: complete_live_data_pending
   official_sources_verified_on: "2026-08-18"
 
 constraints:
@@ -132,10 +136,18 @@ assets:
 
 reference_portfolios:
   sixty_forty:
-    VWRL.L: 0.45
-    CUKX.L: 0.15
+    VWRL.L: 0.40
+    CUKX.L: 0.20
     IGLT.L: 0.15
     AGBP.L: 0.15
     SLXX.L: 0.10
     SGLN.L: 0.00
     AGCP.L: 0.00
+  user_defined:
+    VWRL.L: 0.35
+    CUKX.L: 0.10
+    IGLT.L: 0.15
+    AGBP.L: 0.20
+    SLXX.L: 0.10
+    SGLN.L: 0.07
+    AGCP.L: 0.03

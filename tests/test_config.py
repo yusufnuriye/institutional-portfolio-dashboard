@@ -72,6 +72,17 @@ def test_day_two_signoff_preserves_live_data_boundary() -> None:
     assert project["universe_status"] == "provisional_until_day_2_validation"
 
 
+def test_sprint_one_signoff_preserves_live_results_boundary() -> None:
+    """Formula and defence approval must not invent historical performance."""
+    project = load_config()["project"]
+
+    assert project["sprint_1_metrics_status"] == "approved_live_results_pending"
+    assert project["sprint_1_portfolios_status"] == "approved"
+    assert project["sprint_1_defence_status"] == "approved"
+    assert project["sprint_1_status"] == "complete_live_data_pending"
+    assert project["universe_status"] == "provisional_until_day_2_validation"
+
+
 def test_vehicle_types_distinguish_etfs_from_etcs() -> None:
     """Gold and broad commodities are ETCs; the other proxies are ETFs."""
     assets = {asset["ticker"]: asset for asset in load_config()["assets"]}

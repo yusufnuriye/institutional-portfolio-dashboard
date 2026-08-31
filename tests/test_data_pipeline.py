@@ -49,6 +49,24 @@ def test_download_extracts_adjusted_closes_and_preserves_gaps() -> None:
     assert pd.isna(prices.loc["2017-11-24", "AGCP.L"])
 
 
+def test_download_disables_parallel_requests_to_reduce_rate_limit_pressure() -> None:
+    captured: dict[str, object] = {}
+
+    def recording_downloader(**kwargs: object) -> pd.DataFrame:
+        captured.update(kwargs)
+        return synthetic_download()
+
+    download_adjusted_closes(
+        TICKERS,
+        "2017-11-23",
+        "2017-11-28",
+        downloader=recording_downloader,
+    )
+
+    assert captured["threads"] is False
+    assert captured["auto_adjust"] is True
+
+
 def test_matching_cache_avoids_a_second_download() -> None:
     calls = 0
 
