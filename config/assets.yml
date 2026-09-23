@@ -12,6 +12,12 @@ project:
   sprint_1_portfolios_status: approved
   sprint_1_defence_status: approved
   sprint_1_status: complete_live_data_pending
+  v1_analytics_status: complete
+  v1_interface_status: complete
+  v1_documentation_status: complete
+  reproducible_demo_status: complete
+  live_historical_validation_status: blocked_by_provider_rate_limit
+  final_validation_date: "2026-09-23"
   official_sources_verified_on: "2026-08-18"
 
 constraints:

@@ -1,0 +1,6 @@
+Portfolio,fully_invested,long_only,within_asset_cap,fixed_income_weight,meets_fixed_income_floor,number_of_allocations,demonstration_maximum_drawdown,worst_hypothetical_stress
+equal_weight,True,True,True,0.4285714285714286,True,7,-0.2733745848483782,-0.08285714285714287
+sixty_forty,True,True,True,0.3999999999999999,True,5,-0.1707366306237612,-0.13849999999999996
+user_defined,True,True,True,0.44999999999999996,True,7,-0.15388608684648042,-0.10049999999999999
+minimum_variance,True,True,True,0.7622393399405787,True,5,-0.16758244700212765,-0.09750511883021112
+maximum_sharpe,True,True,True,0.6409194487977787,True,3,-0.12485571881275448,-0.10649696067408929

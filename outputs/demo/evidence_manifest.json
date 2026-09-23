@@ -1,0 +1,36 @@
+{
+  "mode": "demo",
+  "notice": "Deterministic synthetic demonstration data; not historical market data, not a forecast and not investment advice.",
+  "metadata": {
+    "mode": "demonstration",
+    "synthetic": true,
+    "seed": 20260923,
+    "notice": "Deterministic synthetic demonstration data; not historical market data, not a forecast and not investment advice.",
+    "start": "2018-01-02",
+    "end": "2026-09-22",
+    "price_observations": 2276,
+    "daily_return_observations": 2275,
+    "monthly_return_observations": 104,
+    "missing_prices": 0
+  },
+  "portfolio_count": 5,
+  "weight_sums": {
+    "equal_weight": 1.0,
+    "sixty_forty": 1.0,
+    "user_defined": 1.0,
+    "minimum_variance": 1.0,
+    "maximum_sharpe": 1.0
+  },
+  "return_contribution_reconciliation": "passed",
+  "risk_contribution_reconciliation": "passed",
+  "optimisation_solver_status": {
+    "minimum_variance": "Optimization terminated successfully",
+    "maximum_sharpe": "Optimization terminated successfully"
+  },
+  "recommendation": {
+    "portfolio": "user_defined",
+    "status": "provisional for further due diligence",
+    "rationale": "It satisfies the coded mandate, retains all seven sleeves and balances growth, fixed income and real assets. The optimised portfolios are sensitivity tools, not automatic client recommendations."
+  },
+  "known_live_data_limitation": "Yahoo Finance rate-limited the 2026-09-23 validation attempt; demo results are synthetic and are never presented as historical performance."
+}

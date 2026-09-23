@@ -68,7 +68,7 @@ The user-defined portfolio is an illustrative baseline, not the final recommenda
 
 ## Automated evidence
 
-The complete suite currently passes 48 tests covering configuration, data ingestion, data quality, return reconstruction, all eight metrics, portfolio constraints, monthly rebalancing, contribution totals, approval boundaries and output metadata.
+The Sprint 1 suite passed 48 tests covering configuration, data ingestion, data quality, return reconstruction, all eight metrics, portfolio constraints, monthly rebalancing, contribution totals, approval boundaries and output metadata. The completed v1 suite now passes 63 tests; see `docs/v1_validation.md`.
 
 ## User defence
 

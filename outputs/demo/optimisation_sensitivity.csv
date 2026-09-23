@@ -1,0 +1,19 @@
+objective,maximum_asset_weight,minimum_fixed_income_weight,status,annualised_arithmetic_return,annualised_volatility,sharpe_ratio,message
+minimum_variance,0.3,0.3,success,0.023582130277429263,0.05383457683467558,0.438048029054808,Optimization terminated successfully
+maximum_sharpe,0.3,0.3,success,0.040947192441301586,0.060788660913732535,0.6735991848777731,Optimization terminated successfully
+minimum_variance,0.3,0.4,success,0.023582130277429263,0.05383457683467558,0.438048029054808,Optimization terminated successfully
+maximum_sharpe,0.3,0.4,success,0.040947192441301586,0.060788660913732535,0.6735991848777731,Optimization terminated successfully
+minimum_variance,0.3,0.5,success,0.023586249801435345,0.053834576856003166,0.43812455077939766,Optimization terminated successfully
+maximum_sharpe,0.3,0.5,success,0.040947192441301586,0.060788660913732535,0.6735991848777731,Optimization terminated successfully
+minimum_variance,0.35,0.3,success,0.023942437169912126,0.05202990384681945,0.46016685405379065,Optimization terminated successfully
+maximum_sharpe,0.35,0.3,success,0.04453113669683271,0.06336928334726694,0.7027243223313697,Optimization terminated successfully
+minimum_variance,0.35,0.4,success,0.023942437169912126,0.05202990384681945,0.46016685405379065,Optimization terminated successfully
+maximum_sharpe,0.35,0.4,success,0.04453113669683271,0.06336928334726694,0.7027243223313697,Optimization terminated successfully
+minimum_variance,0.35,0.5,success,0.023942494967198594,0.05202990384675831,0.4601679649017901,Optimization terminated successfully
+maximum_sharpe,0.35,0.5,success,0.04453113669683271,0.06336928334726694,0.7027243223313697,Optimization terminated successfully
+minimum_variance,0.4,0.3,success,0.023936556689009365,0.05105595122514457,0.46882990355923165,Optimization terminated successfully
+maximum_sharpe,0.4,0.3,success,0.04522992281225817,0.06434968645589867,0.7028771281310902,Optimization terminated successfully
+minimum_variance,0.4,0.4,success,0.023936556689009365,0.05105595122514457,0.46882990355923165,Optimization terminated successfully
+maximum_sharpe,0.4,0.4,success,0.04522992281225817,0.06434968645589867,0.7028771281310902,Optimization terminated successfully
+minimum_variance,0.4,0.5,success,0.023936737743279216,0.05105595122229705,0.46883344977863445,Optimization terminated successfully
+maximum_sharpe,0.4,0.5,success,0.04522992281225817,0.06434968645589867,0.7028771281310902,Optimization terminated successfully

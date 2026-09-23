@@ -1,203 +1,179 @@
-# Institutional Multi-Asset Portfolio Strategy and Risk Dashboard
+# Harbourstone Institutional Portfolio Dashboard
 
-An educational portfolio-construction project for a fictional UK institutional investor. The project asks how a £100 million balanced-growth portfolio should be allocated across liquid asset classes while balancing return objectives, drawdown risk, diversification, liquidity, inflation sensitivity and resilience under adverse market conditions.
+A tested portfolio-construction and risk dashboard for a fictional £100 million UK charitable foundation. The project converts a client mandate into transparent allocations, performance and risk analytics, constrained optimisation, stress testing and a provisional client conclusion.
 
-The final output will compare simple, user-defined and constrained-optimisation portfolios, then make a reasoned institutional recommendation. Historical results will be treated as evidence rather than forecasts, and the mathematically optimal portfolio will not automatically become the recommendation.
+> **Data status:** the application opens in a deterministic demonstration mode because Yahoo Finance rate-limited the live validation attempt on 23 September 2026. Demonstration results are synthetic. They prove that the workflow is reproducible; they are not historical evidence, forecasts or investment advice.
 
-## Project status
+## What v1 delivers
 
-**Completion Sprint 1 is implemented, tested and user-defended.** The adjusted-price pipeline, return engine, eight performance and risk metrics, and three baseline portfolios are implemented. The automated suite passes 48 tests and the deterministic formula checks are recorded in `docs/sprint1_validation.md`. Yahoo rate limited the latest live-data attempt, so the universe and all historical findings remain provisional. No final portfolio recommendation has been produced.
+- Seven liquid LSE-listed proxies across global and UK equities, government and corporate bonds, gold and broad commodities
+- Complete-date adjusted-price handling with no forward-filling
+- Annualised return, volatility, Sharpe, Sortino, maximum drawdown, beta, historical VaR and Expected Shortfall
+- Equal-weight, 60/40 and diversified policy portfolios
+- Long-only constrained minimum-variance and maximum-Sharpe portfolios
+- Weight, unit, return-contribution and volatility-risk-contribution reconciliations
+- Optimisation sensitivity across asset caps and fixed-income floors
+- Three transparent hypothetical stress scenarios
+- Rule-based mandate and client-suitability checks
+- A five-tab Streamlit dashboard, investment memo and five-slide committee summary
+- 63 automated tests plus a clean-start Streamlit health check
 
 ## Client mandate
 
-Harbourstone Foundation is a fictional UK institutional investor with a £100 million balanced-growth portfolio.
+Harbourstone Foundation is fictional. Its investment brief is:
 
-- **Base currency:** GBP
-- **Horizon:** At least five years
-- **Objective:** Seek UK CPI inflation plus 3% annualised over rolling five-year periods, before transaction costs and tax
-- **Risk profile:** Moderate
-- **Drawdown reference:** Avoid losses materially beyond approximately 15–20%, while recognising that historical analysis cannot guarantee this outcome
-- **Spending policy:** Distribute approximately 3% annually to charitable causes (initially about £3 million)
-- **Liquidity:** Use liquid, publicly traded index-fund or exchange-traded product proxies
-- **Grant reserve:** Keep the next 12 months of planned grants in cash or readily saleable investments
-- **Rebalancing:** Monthly in the core historical portfolio analysis
+| Item | Requirement |
+| --- | --- |
+| Portfolio | £100 million, GBP reporting currency |
+| Objective | Seek UK CPI +3% annualised over rolling five-year periods |
+| Spending | Approximately 3% a year |
+| Horizon and risk | At least five years; moderate risk |
+| Asset bounds | Long only, no leverage, 0–40% per asset |
+| Defensive floor | At least 30% across IGLT, AGBP and SLXX |
+| Liquidity | Publicly traded proxies; retain one year of planned grants in liquid assets |
 
-### Core constraints
+The objective and drawdown reference are aspirations, not guarantees. The model does not ingest CPI, so it does not claim that any portfolio has achieved CPI +3%.
 
-- Long only; no leverage and no short selling
-- Portfolio weights must sum to 100%
-- No individual asset may exceed 40%
-- At least 30% must be allocated to the three fixed-income sleeves in mandate-constrained portfolios
-- All candidate holdings must be publicly traded and sufficiently liquid for this educational simulation
-- Fees, tax, transaction costs and market impact are excluded from the core model
-- Historical optimisation is in-sample evidence, not proof of future performance
-
-The full mandate is documented in [`docs/mandate.md`](docs/mandate.md).
-
-## Key question
-
-How should a fictional UK institutional investor allocate a £100 million portfolio across major liquid asset classes while balancing return objectives, drawdown risk, diversification, liquidity and resilience under adverse market conditions?
-
-## Initial asset universe
-
-The shortlist intentionally combines growth, defensive and inflation-sensitive exposures. It remains provisional until Day 2 confirms data quality and a sufficiently long common history.
-
-| Ticker | Vehicle | Exposure | Portfolio role | GBP treatment | LSE listing start |
-| --- | --- | --- | --- | --- | --- |
-| `VWRL.L` | ETF | Global equities | Core growth | GBP listing; underlying exposure unhedged | 23 May 2012 |
-| `CUKX.L` | ETF | UK large-cap equities | Home-market growth tilt | GBP assets and GBP listing | 15 Sep 2010 |
-| `IGLT.L` | ETF | UK government bonds | Sovereign defence and duration | GBP assets and GBP listing | 1 Dec 2006 |
-| `AGBP.L` | ETF | Global investment-grade bonds | Diversified defensive fixed income | GBP-hedged share class | 23 Nov 2017 |
-| `SLXX.L` | ETF | Sterling investment-grade corporate bonds | Credit income and diversification | GBP assets and GBP listing | 29 Mar 2004 |
-| `SGLN.L` | Physical-metal ETC | Physical gold | Crisis and inflation-sensitive diversifier | GBP listing; gold exposure unhedged | 11 Apr 2011 |
-| `AGCP.L` | Collateralised-swap ETC | Broad commodity futures | Inflation-sensitive diversifier | GBP listing; underlying USD index unhedged | 29 Oct 2007 |
-
-The earliest possible common start is expected to be 23 November 2017 because `AGBP.L` is the youngest LSE listing. Day 2 will verify the actual Yahoo Finance histories, missing observations, adjusted-price behaviour and overlapping date range before the universe is finalised.
-
-## Currency policy
-
-GBP is the reporting currency. London-listed GBP price series will be used where available, but trading in GBP is not treated as equivalent to currency hedging.
-
-- UK equities, gilts and sterling corporate bonds are GBP-denominated exposures.
-- `AGBP.L` is explicitly a GBP-hedged global bond share class.
-- `VWRL.L`, `SGLN.L` and `AGCP.L` are not currency-hedged. Their GBP market-price returns include the effect of sterling movements as well as the underlying asset exposure.
-- The core project will not decompose asset returns into local-market and FX components. This will be stated as a limitation.
-
-## Planned portfolio comparisons
-
-1. Equal weight
-2. Transparent 60/40 equity-bond reference
-3. User-selected allocation
-4. Minimum variance
-5. Maximum historical Sharpe ratio
-6. Final recommended institutional allocation
-
-The mandate-compliant 60/40 reference allocates 40% to global equities, 20% to UK equities, 15% to UK gilts, 15% to GBP-hedged global aggregate bonds and 10% to sterling investment-grade credit.
-
-## Methodology
-
-Planned modules include:
-
-- Adjusted historical-price ingestion, local caching and data-quality checks
-- Daily and monthly simple returns, cumulative wealth and CAGR
-- Volatility, Sharpe, Sortino, maximum drawdown, beta, historical VaR and Expected Shortfall
-- Portfolio construction, return contribution and component risk contribution
-- Long-only constrained minimum-variance and maximum-Sharpe optimisation
-- Historical stress windows and transparent hypothetical asset shocks
-- Client-suitability assessment and an investment recommendation with conditions and caveats
-
-## Project structure
-
-```text
-institutional-portfolio-dashboard/
-├── app.py
-├── README.md
-├── requirements.txt
-├── config/
-│   └── assets.yml
-├── data/
-│   └── cache/
-├── docs/
-│   ├── assumptions.md
-│   └── mandate.md
-├── outputs/
-│   └── charts/
-├── src/
-│   ├── __init__.py
-│   ├── data_pipeline.py
-│   ├── data_quality.py
-│   ├── metrics.py
-│   ├── portfolios.py
-│   └── returns.py
-└── tests/
-    ├── test_config.py
-    ├── test_data_pipeline.py
-    ├── test_data_quality.py
-    ├── test_metrics.py
-    ├── test_portfolios.py
-    └── test_returns.py
-```
-
-Financial calculations remain separate from the Streamlit presentation layer. Sprint 1 adds the eight-metric engine, three baseline portfolios, monthly rebalancing and auditable contribution checks under `src/`, with formula and constraint tests under `tests/`.
-
-## Installation
+## Reproduce the project
 
 Python 3.12 is the reference environment.
 
 ```bash
+git clone https://github.com/yusufnuriye/institutional-portfolio-dashboard.git
+cd institutional-portfolio-dashboard
 python -m venv .venv
 ```
 
-On Windows PowerShell:
+Windows PowerShell:
 
 ```powershell
 .venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
+python -m pytest -q
+python -m src.v1 --mode demo --output-dir outputs/demo
+python -m streamlit run app.py
 ```
 
-On macOS or Linux:
+macOS or Linux:
 
 ```bash
 source .venv/bin/activate
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
+python -m pytest -q
+python -m src.v1 --mode demo --output-dir outputs/demo
+python -m streamlit run app.py
 ```
 
-## Run locally
+Open `http://localhost:8501`. The default mode works without a network connection and always recreates the same results with seed `20260923`.
+
+To retry the validated live path:
 
 ```bash
-streamlit run app.py
+python -m src.v1 --mode live --refresh --output-dir outputs/live
 ```
 
-## Build the Day 2 data and return outputs
+Live mode stops instead of publishing partial results when a ticker is absent, prices are invalid, the common sample is shorter than five years, a one-day adjusted move exceeds 50%, or compounded returns do not reconstruct price growth.
 
-From the project root, run:
+## Demonstration portfolios
 
-```bash
-python -m src.returns --refresh
+| Portfolio | Purpose | Key allocation feature |
+| --- | --- | --- |
+| Equal weight | Naive diversification reference | 14.3% in each sleeve |
+| 60/40 reference | Transparent equity and bond comparator | 60% equity, 40% fixed income |
+| Diversified policy | Client-oriented policy comparator | 45% equity, 45% fixed income, 10% real assets |
+| Minimum variance | Constraint sensitivity | Minimises in-sample covariance-based volatility |
+| Maximum Sharpe | Constraint sensitivity | Maximises in-sample arithmetic excess return per unit of volatility |
+
+All five portfolios are fully invested, long only, capped at 40% per asset and hold at least 30% fixed income.
+
+## Demonstration findings
+
+These values come from deterministic synthetic returns from 2 January 2018 to 22 September 2026.
+
+| Portfolio | CAGR | Volatility | Sharpe | Max drawdown | 95% daily ES |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Equal weight | 1.6% | 7.4% | 0.20 | -27.3% | 0.95% |
+| 60/40 reference | 4.6% | 9.9% | 0.47 | -17.1% | 1.28% |
+| Diversified policy | 3.9% | 8.0% | 0.48 | -15.4% | 1.03% |
+| Minimum variance | 2.3% | 5.6% | 0.37 | -16.8% | 0.72% |
+| Maximum Sharpe | 4.4% | 7.0% | 0.61 | -12.5% | 0.90% |
+
+The diversified policy portfolio is the **provisional client comparator**, subject to live-data validation and fuller due diligence. It holds all seven sleeves and satisfies the coded mandate. The maximum-Sharpe result is not selected automatically because it is concentrated in only three sleeves and depends on in-sample estimates.
+
+The policy portfolio remains equity-risk-led: VWRL and CUKX contribute about 82% of covariance-based portfolio volatility in the demonstration. Its worst hypothetical result is -10.0% in the growth shock, compared with -13.8% for the 60/40 reference. These scenarios are weighted asset-shock assumptions, not forecasts.
+
+## Methodology controls
+
+- Inputs are decimal returns: `0.01` means 1%.
+- CAGR uses monthly compounded returns.
+- Volatility, Sharpe, Sortino, drawdown, beta, VaR and Expected Shortfall use daily returns.
+- Volatility uses sample standard deviation and square-root-of-time annualisation.
+- The default annual risk-free rate and minimum acceptable return are 0%.
+- VaR and Expected Shortfall use the lower 5% historical tail and are shown as positive daily loss magnitudes.
+- Portfolio paths reset to target weights at each calendar-month boundary.
+- Arithmetic return contributions equal weight × mean monthly return × 12 and reconcile to arithmetic portfolio return. They do not decompose geometric CAGR.
+- Component volatility contributions equal weight × marginal volatility and reconcile to total covariance-based portfolio volatility.
+- Optimisation uses SLSQP with explicit bounds and equality/inequality constraints. Failed solvers raise a visible error.
+
+Full formulas, validation rules and scenario definitions are in [`docs/methodology.md`](docs/methodology.md). The evidence outputs are in [`outputs/demo`](outputs/demo).
+
+## Repository map
+
+```text
+.
+├── app.py                         # Streamlit interface
+├── config/assets.yml              # Universe, mandate and reference weights
+├── src/
+│   ├── data_pipeline.py           # Adjusted-price download and caching
+│   ├── data_quality.py            # Common-history integrity checks
+│   ├── demo_data.py               # Explicit deterministic demonstration data
+│   ├── metrics.py                 # Eight performance and risk metrics
+│   ├── portfolios.py              # Portfolio paths and return contributions
+│   ├── optimisation.py            # Constrained optimisers and sensitivity
+│   ├── risk.py                    # Volatility-risk contributions
+│   ├── stress.py                  # Hypothetical asset shocks
+│   ├── suitability.py             # Mandate checks and provisional conclusion
+│   └── v1.py                      # End-to-end workflow and evidence export
+├── tests/                          # 63 automated tests
+├── docs/                           # Mandate, methodology, memo and IC deck
+└── outputs/demo/                   # Reproducible evidence tables and manifest
 ```
 
-This requests adjusted daily closes, writes a matching local cache, aligns all seven assets to complete shared dates, creates a data-quality report and saves daily, month-end and cumulative return files. The command stops rather than publishing outputs if a ticker is missing, the common sample is too short, a price is non-positive, a daily move exceeds the review threshold or compounded returns fail to reconstruct price growth.
+## Evidence
 
-The generated files remain under `data/cache/` and are deliberately excluded from Git because they can be downloaded again. A successful live run is required before changing the universe from provisional to final.
+Validated on 23 September 2026 in a clean Python 3.12 virtual environment:
 
-## Build Sprint 1 metrics and portfolios
-
-After a successful live-data run, execute:
-
-```bash
-python -m src.metrics
-python -m src.portfolios
+```text
+63 passed
+Streamlit clean-start health endpoint: ok
+Five portfolio weight sums: 1.0
+Return contribution reconciliation: passed
+Risk contribution reconciliation: passed
+Optimisation solver status: passed
 ```
 
-The calculation assumptions, sign conventions, manual formula checks and portfolio reconciliations are documented in [`docs/sprint1_validation.md`](docs/sprint1_validation.md).
+## Known limitations
 
-## Data sources
+1. Yahoo Finance rate-limited the live validation attempt, so the committed numerical results are synthetic demonstrations rather than market-history findings.
+2. `yfinance` is an unofficial research interface. Provider data can be revised, missing or inconsistent.
+3. The core model does not ingest CPI, forecast inflation or prove delivery of CPI +3%.
+4. Optimisation is in-sample and sensitive to estimated means, covariance, the sample window and constraint choices.
+5. External fees, tax, bid–ask spreads, transaction costs, market impact and charitable withdrawals are not modelled.
+6. GBP-listed prices embed currency effects. The model does not separate local-asset and foreign-exchange returns.
+7. Stress scenarios are linear one-period shocks. They omit nonlinear payoffs, changing correlations, trading suspensions and liquidity stress.
+8. The seven funds and ETCs are proxies. Overlap exists across global and UK equities, bond sleeves, gold and commodities.
+9. Historical or synthetic risk measures cannot bound future losses. VaR and Expected Shortfall do not represent the maximum possible loss.
 
-- Historical market prices: Yahoo Finance via `yfinance` (pipeline implemented; first live download still required)
-- Product exposure, inception and currency facts: official Vanguard, iShares and WisdomTree product pages
+## Documents
 
-`yfinance` is an unofficial research interface and is not affiliated with or endorsed by Yahoo. Downloaded data may contain errors, revisions, missing observations or inconsistent adjusted-price behaviour. Raw downloads will be cached and validated before calculations are performed.
+- [`docs/methodology.md`](docs/methodology.md)
+- [`docs/investment_memo.md`](docs/investment_memo.md)
+- `docs/Harbourstone_Investment_Memo.docx`
+- `docs/Harbourstone_IC_Summary.pptx`
+- [`docs/v1_validation.md`](docs/v1_validation.md)
+- [`docs/technical_and_client_defence.md`](docs/technical_and_client_defence.md)
+- [`docs/cv_and_linkedin.md`](docs/cv_and_linkedin.md)
 
-## Assumptions
+## Disclaimer
 
-The live assumption register is in [`docs/assumptions.md`](docs/assumptions.md). Important initial assumptions include 252 trading days per year, 12 monthly periods per year, monthly portfolio rebalancing, a 0% default annual risk-free rate and 95% historical VaR/Expected Shortfall confidence.
-
-## Main findings
-
-Not yet available. Findings will only be written after the data pipeline, calculations and validation tests exist.
-
-## Recommendation
-
-Not yet available. The recommendation will be selected against the client mandate and will not automatically copy an optimiser output.
-
-## Limitations
-
-Known limitations already include proxy choice, a post-2017 common sample, unmodelled transaction costs and tax, unseparated currency effects, in-sample optimisation, unstable historical correlations and simplified hypothetical shocks. These will be refined as evidence is produced.
-
-## Future improvements
-
-Potential extensions such as out-of-sample testing, Black–Litterman, Monte Carlo simulation or factor analysis are out of scope until every core deliverable is complete.
-
-## Educational disclaimer
-
-This repository is an educational simulation using a fictional client. It does not manage real money and does not constitute investment advice, a recommendation to trade, or a guarantee of future performance.
+This repository is an educational simulation for a fictional client. It does not manage real money and does not constitute investment advice or a recommendation to trade.
